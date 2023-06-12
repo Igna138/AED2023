@@ -10,20 +10,72 @@ def idioma_esp_por(linea):
     return idioma
 
 # Consigna 2
-def veh_proc():
-    pass
+def veh_proc(patente):
+    carg, cbol, cbra, cchi, cpar, curu, cotr = 0, 0, 0, 0, 0, 0, 0
+    
+    if len(patente) == 7:
+        if patente[:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha():
+            carg = 1
+        elif patente[:3].isalpha() and patente[3:].isdigit():
+            curu = 1
+        elif patente[:2].isalpha() and patente[2:].isdigit():
+            cbol = 1
+        elif patente[:4].isalpha() and patente[4:].isdigit():
+            cpar = 1
+        elif patente[:3].isalpha() and patente[3:4].isdigit() and patente[4:5].isalpha() and patente[5:].isdigit():
+            cbra = 1
+        elif patente[0:1] == " " and patente[1:5].isalpha() and patente[5:].isdigit():
+            cchi = 1
+        else:
+            cotr = 1
+            
+    return carg, cbol, cbra, cchi, cpar, curu, cotr
 
 # Consigna 3
-def imp_tot():
-    pass
+def imp_tot(pais, tipo, pago):
+    importe_final = 0
+    # Pais de la cabina de peaje
+    if pais == 2:
+        importe_base = 400
+    elif pais == 1:
+        importe_base = 200
+    else:
+        importe_base = 300
+    # Tipo de vehiculo
+    if tipo == 0:
+        importe_base *= 0.5
+    elif tipo == 2:
+        importe_base *= 1.6
+
+    # Aplicación del descuento por telepeaje
+    if pago == 2:
+        importe_final = int(importe_base * 0.9)
+    else:
+        importe_final = int(importe_base)
+        
+    return importe_final
 
 # Consigna 4
-def cant_patente():
-    pass
+def cant_patente(patente_primera, patente):
+    cpp = 0
+    if patente == patente_primera:
+        cpp += 1
+    
+    return cpp
+        
 
 # Consigna 5
-def import_total_final():
-    pass
+def may_import(mayimp, imp_final, patente):
+    
+    if mayimp == 0:
+        mayimp = imp_final
+        maypat = patente
+    
+    elif mayimp < imp_final:
+        mayimp = imp_final
+        maypat = patente
+    
+    return mayimp, maypat
 
 # Consigna 6
 def otro_pais():
@@ -44,19 +96,46 @@ def test():
     # Punto 1
     idioma = idioma_esp_por(linea)
 
-    #Punto 2
+    # Punto 2
     linea = arch.readline() # Leemos de la segunda linea para adelante
-
+    primera_patente = linea[0:7]
+    carg, cbol, cbra, cchi, cpar, curu, cotr = 0, 0, 0, 0, 0, 0, 0
+    imp_acu_total = 0 
+    primera = None
+    cpp = 0
+    mayimp = 0
+    maypat = ""
+    
     while linea != "":
         patente = linea[0:7]
+        resultado = veh_proc(patente)
+        carg += resultado[0]
+        cbol += resultado[1]
+        cbra += resultado[2]
+        cchi += resultado[3]
+        cpar += resultado[4]
+        curu += resultado[5]
+        cotr += resultado[6]
+        
+    # Punto 3   
         tipo = int(linea[7])
         forma_pago = int(linea[8])
         pais = int(linea[9])
-        distancia = int(linea[10:13])
+        resultado2 = imp_tot(pais, tipo, forma_pago)
+        imp_acu_total += (resultado2)
+        
+    # Punto 4
+        primera = primera_patente[0:7]
+        resultado3 = cant_patente(primera, patente)
+        cpp += int(resultado3)
+        
+    # Punto 5
+        mayimp, maypat = may_import(mayimp, resultado2, patente)
+    
+       
+        #distancia = int(linea[10:13])
 
-
-
-
+        linea = arch.readline() # Leemos la siguiente linea hasta el final
 
     # Se cierra el archivo
     arch.close()
@@ -65,22 +144,22 @@ def test():
     print('(r1) - Idioma a usar en los informes: ', idioma)
 
     print()
-    #print('(r2) - Cantidad de patentes de Argentina:', carg)
-    #print('(r2) - Cantidad de patentes de Bolivia:', cbol)
-    #print('(r2) - Cantidad de patentes de Brasil:', cbra)
-    #print('(r2) - Cantidad de patentes de Chile:', cchi)
-    #print('(r2) - Cantidad de patentes de Paraguay:', cpar)
-    #print('(r2) - Cantidad de patentes de Uruguay:', curu)
-    #print('(r2) - Cantidad de patentes de otro pais;', cotr)
+    print('(r2) - Cantidad de patentes de Argentina:', carg)
+    print('(r2) - Cantidad de patentes de Bolivia:', cbol)
+    print('(r2) - Cantidad de patentes de Brasil:', cbra)
+    print('(r2) - Cantidad de patentes de Chile:', cchi)
+    print('(r2) - Cantidad de patentes de Paraguay:', cpar)
+    print('(r2) - Cantidad de patentes de Uruguay:', curu)
+    print('(r2) - Cantidad de patentes de otro pais:', cotr)
 
     print()
-    #print('(r3) - Importe acumulado total de importes finales: ', imp_acu_total)
+    print('(r3) - Importe acumulado total de importes finales: ', imp_acu_total)
 
     print()
-    #print('(r4) - Primera patente del archivo: ', primera, '- Frecuencia de aparicion: ', cpp)
+    print('(r4) - Primera patente del archivo: ', primera, '- Frecuencia de aparicion: ', cpp)
 
     print()
-    #print('(r5) - Mayor importe final cobrado:', mayimp, ' - Patente a la que se cobró ese importe: ', maypat)
+    print('(r5) - Mayor importe final cobrado:', mayimp, ' - Patente a la que se cobró ese importe: ', maypat)
 
     print()
     #print('(r6) - Porcentaje de patentes de otros países:', porc, '\b%')
