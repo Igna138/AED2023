@@ -65,7 +65,7 @@ def cant_patente(patente_primera, patente):
         
 
 # Consigna 5
-def may_import(mayimp, imp_final, patente):
+def may_import(mayimp, maypat, imp_final, patente):
     
     if mayimp == 0:
         mayimp = imp_final
@@ -130,7 +130,7 @@ def test():
         cpp += int(resultado3)
         
     # Punto 5
-        mayimp, maypat = may_import(mayimp, resultado2, patente)
+        mayimp, maypat = may_import(mayimp, maypat, resultado2, patente)
     
        
         #distancia = int(linea[10:13])
