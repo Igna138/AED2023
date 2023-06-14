@@ -1,4 +1,4 @@
-FD = "peaje25.txt"
+FD = "peaje100.txt"
 
 # Consigna 1
 def idioma_esp_por(linea):
@@ -52,7 +52,7 @@ def imp_tot(pais, tipo, pago):
         importe_final = int(importe_base * 0.9)
     else:
         importe_final = int(importe_base)
-        
+
     return importe_final
 
 # Consigna 4
@@ -65,17 +65,12 @@ def cant_patente(patente_primera, patente):
         
 
 # Consigna 5
-def may_import(mayimp, maypat, imp_final, patente):
+def may_import(mayimp, imp_final):
     
-    if mayimp == 0:
+    if mayimp == 0 or mayimp < imp_final:
         mayimp = imp_final
-        maypat = patente
-    
-    elif mayimp < imp_final:
-        mayimp = imp_final
-        maypat = patente
-    
-    return mayimp, maypat
+
+    return mayimp
 
 # Consigna 6
 def otro_pais():
@@ -105,7 +100,8 @@ def test():
     cpp = 0
     mayimp = 0
     maypat = ""
-    
+    bandera = False
+
     while linea != "":
         patente = linea[0:7]
         resultado = veh_proc(patente)
@@ -121,18 +117,26 @@ def test():
         tipo = int(linea[7])
         forma_pago = int(linea[8])
         pais = int(linea[9])
-        resultado2 = imp_tot(pais, tipo, forma_pago)
-        imp_acu_total += (resultado2)
+        imp_final = imp_tot(pais, tipo, forma_pago)
+        imp_acu_total += imp_final
+
+        if bandera and imp_final > mayimp:
+            bandera = False
         
     # Punto 4
         primera = primera_patente[0:7]
-        resultado3 = cant_patente(primera, patente)
-        cpp += int(resultado3)
+        resultado2 = cant_patente(primera, patente)
+        cpp += int(resultado2)
         
     # Punto 5
-        mayimp, maypat = may_import(mayimp, maypat, resultado2, patente)
-    
-       
+        mayimp = may_import(mayimp, imp_final)
+
+        if mayimp == imp_final and not bandera:
+            bandera = True
+            maypat = patente
+
+    # Punto 6
+
         #distancia = int(linea[10:13])
 
         linea = arch.readline() # Leemos la siguiente linea hasta el final
@@ -159,7 +163,7 @@ def test():
     print('(r4) - Primera patente del archivo: ', primera, '- Frecuencia de aparicion: ', cpp)
 
     print()
-    print('(r5) - Mayor importe final cobrado:', mayimp, ' - Patente a la que se cobró ese importe: ', maypat)
+    print('(r5) - Mayor importe final cobrado:', mayimp, ' - Patente a la que se cobró ese importe:', maypat)
 
     print()
     #print('(r6) - Porcentaje de patentes de otros países:', porc, '\b%')
