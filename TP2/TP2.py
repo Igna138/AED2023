@@ -1,4 +1,4 @@
-FD = "peaje100.txt"
+FD = "peaje25.txt"
 
 # Consigna 1
 def idioma_esp_por(linea):
@@ -73,8 +73,11 @@ def may_import(mayimp, imp_final):
     return mayimp
 
 # Consigna 6
-def otro_pais():
-    pass
+def porcentaje(otro_pais, total):
+
+    porc = round((otro_pais * 100) / total, 2)
+
+    return porc
 
 # Consigna 7
 def dist_prom():
@@ -101,6 +104,9 @@ def test():
     mayimp = 0
     maypat = ""
     bandera = False
+    cont_total_pant = 0
+    cont_otro_pais = 0
+    
 
     while linea != "":
         patente = linea[0:7]
@@ -136,7 +142,13 @@ def test():
             maypat = patente
 
     # Punto 6
-
+        cont_total_pant += 1
+        
+        if cotr != 0:
+            porc = porcentaje(cotr, cont_total_pant)
+        
+    # Punto 7
+    
         #distancia = int(linea[10:13])
 
         linea = arch.readline() # Leemos la siguiente linea hasta el final
@@ -166,7 +178,7 @@ def test():
     print('(r5) - Mayor importe final cobrado:', mayimp, ' - Patente a la que se cobró ese importe:', maypat)
 
     print()
-    #print('(r6) - Porcentaje de patentes de otros países:', porc, '\b%')
+    print('(r6) - Porcentaje de patentes de otros países:', porc, '\b%')
 
     print()
     #print('(r7) - Distancia promedio recorrida por vehículos argentinos pasando por cabinas brasileñas:', prom, '\bkm')
