@@ -1,3 +1,4 @@
+#Antes de entregar, modificar a peajes.txt
 FD = "peaje25.txt"
 
 # Consigna 1
@@ -10,26 +11,33 @@ def idioma_esp_por(linea):
     return idioma
 
 # Consigna 2
-def veh_proc(patente):
+def veh_proc(patente, band):
     carg, cbol, cbra, cchi, cpar, curu, cotr = 0, 0, 0, 0, 0, 0, 0
     
     if len(patente) == 7:
         if patente[:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha():
             carg = 1
+            band = True
         elif patente[:3].isalpha() and patente[3:].isdigit():
             curu = 1
+            band = False
         elif patente[:2].isalpha() and patente[2:].isdigit():
             cbol = 1
+            band = False
         elif patente[:4].isalpha() and patente[4:].isdigit():
             cpar = 1
+            band = False
         elif patente[:3].isalpha() and patente[3:4].isdigit() and patente[4:5].isalpha() and patente[5:].isdigit():
             cbra = 1
+            band = False
         elif patente[0:1] == " " and patente[1:5].isalpha() and patente[5:].isdigit():
             cchi = 1
+            band = False
         else:
             cotr = 1
+            band = False
             
-    return carg, cbol, cbra, cchi, cpar, curu, cotr
+    return carg, cbol, cbra, cchi, cpar, curu, cotr, band
 
 # Consigna 3
 def imp_tot(pais, tipo, pago):
@@ -80,8 +88,15 @@ def porcentaje(otro_pais, total):
     return porc
 
 # Consigna 7
-def dist_prom():
-    pass
+def dist_prom(cont_distancia, cont_aut_arg):
+    if cont_distancia != 0:
+        prom = round(cont_distancia / cont_aut_arg, 2)
+
+    else:
+        prom = 0
+
+    return prom
+
 
 # Programa principal
 def test():
@@ -105,12 +120,14 @@ def test():
     maypat = ""
     bandera = False
     cont_total_pant = 0
-    cont_otro_pais = 0
-    
+    band_arg = False
+    cont_aut_arg = 0
+    cont_distancia = 0
+    prom = 0
 
     while linea != "":
         patente = linea[0:7]
-        resultado = veh_proc(patente)
+        resultado = veh_proc(patente, band_arg)
         carg += resultado[0]
         cbol += resultado[1]
         cbra += resultado[2]
@@ -118,6 +135,7 @@ def test():
         cpar += resultado[4]
         curu += resultado[5]
         cotr += resultado[6]
+        band_arg = resultado[7]
         
     # Punto 3   
         tipo = int(linea[7])
@@ -148,8 +166,12 @@ def test():
             porc = porcentaje(cotr, cont_total_pant)
         
     # Punto 7
-    
-        #distancia = int(linea[10:13])
+        distancia = int(linea[10:13])
+        if band_arg and pais == 2:
+            cont_aut_arg += 1
+            cont_distancia += distancia
+            prom = dist_prom(cont_distancia, cont_aut_arg)
+
 
         linea = arch.readline() # Leemos la siguiente linea hasta el final
 
@@ -181,7 +203,7 @@ def test():
     print('(r6) - Porcentaje de patentes de otros países:', porc, '\b%')
 
     print()
-    #print('(r7) - Distancia promedio recorrida por vehículos argentinos pasando por cabinas brasileñas:', prom, '\bkm')
+    print('(r7) - Distancia promedio recorrida por vehículos argentinos pasando por cabinas brasileñas:', prom, '\bkm')
 
 if __name__ == "__main__":
     test()
