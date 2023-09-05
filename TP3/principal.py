@@ -21,13 +21,20 @@ def principal():
         opc = int(input('Elija una de las opciones:\t'))
 
         if opc == 1:
-            generarTicketTexto(FD, tickets)
+            #Validacion
+            if len(tickets) == 0:
+                cargar_arreglo_texto(FD, tickets)
+            else:
+                opc2 = input("Esta seguro de esta operacion? Se eliminara todo contenido del arreglo y se sobreescribira con el del archivo (Elija SI o NO): ")
+                if opc2.lower() == "si":
+                    tickets = []
+                    cargar_arreglo_texto(FD, tickets)
 
         elif opc == 2:
             pass
 
         elif opc == 3:
-            pass
+            display(tickets)
 
         elif opc == 4:
             pass

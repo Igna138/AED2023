@@ -10,12 +10,12 @@ class Ticket():
 
     def __str__(self):
         pai = Ticket.paisToString(self.pais)
-        r = "Id Ticket: {:<5}".format(self.id)
-        r += "Patente: {:^15}".format(self.patente)
-        r += "Vehiculo: {:>5}".format(self.vehiculo)
-        r += "Forma de pago: {:<15}".format(self.pago)
+        r = "Id Ticket: {:<10}".format(self.id)
+        r += "Patente: {:^10}".format(self.patente)
+        r += "Vehiculo: {:^5}".format(self.vehiculo)
+        r += "Forma de pago: {:<5}".format(self.pago)
         r += "Pais: {:<15}".format(pai)
-        r += "Distancia desde la ultima cabina: {:<15}".format(self.distancia)
+        r += "Distancia desde la ultima cabina: {:<30}".format(self.distancia)
         return r
 
     def paisToString(pais):
@@ -34,19 +34,31 @@ def generarTicket():
 
 #Estructura carga por archivo
 def generarTicketTexto(linea):
-    id = linea[0:10]
-    pat = linea [10:17]
-    veh = linea[17]
-    pago = linea [18]
-    pais = linea[19]
-    dist = linea[20:23]
+    id = int(linea[0:10])
+    pat = linea[10:17]
+    veh = int(linea[17:18])
+    pago = int(linea[18:19])
+    pais = int(linea[19:20])
+    dist = float(linea[20:23])
     return Ticket(id, pat, veh, pago, pais, dist)
 
 def cargar_arreglo_texto(fd, v):
     arch = open(fd, "r")
     linea = arch.readline() #Leemos la primera linea
-    for i in arch:
-        linea = arch.readline()#Leemos de la segunda linea para delante
-        v[i] = generarTicketTexto(linea)
-        
+    linea = arch.readline()  # Leemos de la segunda linea para delante
+    while linea != "":
+        v.append(generarTicketTexto(linea))
+        linea = arch.readline()#siguiente linea...
+    arch.close()
     return v
+
+def display(v):
+    if len(v) == 0:
+        print('No hay datos cargados....')
+        print()
+        return
+
+    print('Listado de tickets')
+    for tickets in v:
+        print(tickets)
+        print()
