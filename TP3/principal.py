@@ -21,7 +21,7 @@ def principal():
         opc = int(input('Elija una de las opciones:\t'))
 
         if opc == 1:
-            pass
+            generarTicketTexto(FD, tickets)
 
         elif opc == 2:
             pass

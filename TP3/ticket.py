@@ -22,7 +22,7 @@ class Ticket():
         paises = ['Argentina ', 'Bolivia ', 'Brasil ', 'Paraguay ', 'Uruguay']
         return paises[pais]
 
-#Opcion si se carga por teclado
+#Estrutura para carga por teclado
 def generarTicket():
     id = int(input("Nro de Ticket: "))
     pat = input("Ingrese la patente: ")
@@ -31,3 +31,22 @@ def generarTicket():
     pais = int(input("Ingrese el país donde se encuentra la cabina (0: Argentina, 1: Bolivia, 2: Brasil, 3: Paraguay, 4: Uruguay): "))
     dist = float(input("Ingrese la distancia recorrida desde la última cabina en kilómetros: "))
     return Ticket(id, pat, veh, pago, pais, dist)
+
+#Estructura carga por archivo
+def generarTicketTexto(linea):
+    id = linea[0:10]
+    pat = linea [10:17]
+    veh = linea[17]
+    pago = linea [18]
+    pais = linea[19]
+    dist = linea[20:23]
+    return Ticket(id, pat, veh, pago, pais, dist)
+
+def cargar_arreglo_texto(fd, v):
+    arch = open(fd, "r")
+    linea = arch.readline() #Leemos la primera linea
+    for i in arch:
+        linea = arch.readline()#Leemos de la segunda linea para delante
+        v[i] = generarTicketTexto(linea)
+        
+    return v
