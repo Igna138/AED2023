@@ -31,7 +31,7 @@ def principal():
                     cargar_arreglo_texto(FD, tickets)
 
         elif opc == 2:
-            pass
+            carga_arreglo_manual(tickets)
 
         elif opc == 3:
             display(tickets)

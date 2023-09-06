@@ -24,15 +24,52 @@ class Ticket():
         paises = ['Argentina ', 'Bolivia ', 'Brasil ', 'Paraguay ', 'Uruguay']
         return paises[pais_cab]
 
+def validate_intervalo(inf, sup):
+    n = inf - 1
+    while n < inf or n > sup:
+        n = int(input('El valor deberia estar entre' + str(inf) + ' y ' + str(sup) + ' : '))
+        if n < inf or n > sup:
+            print('\n\nError...vuelva a cargarlo')
+
+    return n
+
+def validate(num):
+    n = num
+    while n <= num:
+        n = int(input('Valor mayor que ' + str(num) + ' : '))
+        if n <= num:
+            print("\n\nError....vuelva a intentarlo")
+    return n
+
+def validate_patente(pat):
+    long = len(pat)
+    for i in range(long):
+        if pat[i].isalpha() or pat[i].isdigit():
+            continue
+        else:
+            print('La patente esta mal cargada....solo puede tener digitos y letras')
+            return -1
+    return
 
 #Estrutura para carga por teclado
 def generarTicket():
-    id = int(input("Nro de Ticket: "))
-    pat = input("Ingrese la patente: ")
+    print('Nro de ticket: ', end=" ")
+    id = validate_intervalo(1, 999999999)
+    pat = input('Ingrese la patente: ')
+    obli = 1 #Condicion para forzar el incio del ciclo
+    while obli == 1:
+        if validate_patente(pat) != -1:
+            break
+        else:
+            pat = input('Vuelva a ingresar la patente: ')
+    print('La patente es del pais: ', end=" ")
     pais_pat = pais_patente(pat)
-    veh = int(input("Ingrese el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión): "))
-    pago = int(input("Ingrese la forma de pago (1: manual, 2: telepeaje): "))
-    pais = int(input("Ingrese el país donde se encuentra la cabina (0: Argentina, 1: Bolivia, 2: Brasil, 3: Paraguay, 4: Uruguay): "))
+    print("Ingrese el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión): ", end=' ')
+    veh = validate_intervalo(0, 2)
+    print("Ingrese la forma de pago (1: manual, 2: telepeaje): ", end=' ')
+    pago = validate_intervalo(1, 2)
+    print("Ingrese el país donde se encuentra la cabina (0: Argentina, 1: Bolivia, 2: Brasil, 3: Paraguay, 4: Uruguay): ", end='')
+    pais = validate_intervalo(0, 4)
     dist = float(input("Ingrese la distancia recorrida desde la última cabina en kilómetros: "))
     return Ticket(id, pat, pais_pat, veh, pago, pais, dist)
 
@@ -47,6 +84,7 @@ def generarTicketTexto(linea):
     dist = float(linea[20:23])
     return Ticket(id, pat, pais_pat, veh, pago, pais, dist)
 
+#Identificador de patentes
 def pais_patente(patente):
     if len(patente) == 7:
         if patente[:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha():
@@ -66,6 +104,15 @@ def pais_patente(patente):
 
     return pais
 
+#Ordena arreglo por codigo
+def ordenar_men_may(v):
+    n = len(v)
+    for i in range(n-1):
+        for j in range(i+1, n):
+            if v[i].id > v[j].id:
+                v[i], v[j] = v[j], v[i]
+
+#Opcion 1
 def cargar_arreglo_texto(fd, v):
     arch = open(fd, "r")
     linea = arch.readline() #Leemos la primera linea
@@ -76,13 +123,29 @@ def cargar_arreglo_texto(fd, v):
     arch.close()
     return v
 
+#Opcion 2
+def carga_arreglo_manual(v):
+    print("Ingrese la cantidad de tickets que quiere registrar: ", end=" ")
+    n = validate(0)
+    print()
+
+    print("Ingrese datos del ticket: ")
+    for i in range(n):
+        v.append(generarTicket())
+
+    return v
+
+
+#opcion3
 def display(v):
     if len(v) == 0:
         print('No hay datos cargados....')
         print()
         return
 
+    ordenar_men_may(v)
     print('Listado de tickets')
     for tickets in v:
         print(tickets)
         print()
+
