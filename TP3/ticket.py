@@ -27,7 +27,7 @@ class Ticket():
 def validate_intervalo(inf, sup):
     n = inf - 1
     while n < inf or n > sup:
-        n = int(input('El valor deberia estar entre' + str(inf) + ' y ' + str(sup) + ' : '))
+        n = int(input('El valor deberia estar entre ' + str(inf) + ' y ' + str(sup) + ' : '))
         if n < inf or n > sup:
             print('\n\nError...vuelva a cargarlo')
 
@@ -53,7 +53,7 @@ def validate_patente(pat):
 
 #Estrutura para carga por teclado
 def generarTicket():
-    print('Nro de ticket: ', end=" ")
+    print('Nro de ticket: ')
     id = validate_intervalo(1, 999999999)
     pat = input('Ingrese la patente: ')
     obli = 1 #Condicion para forzar el incio del ciclo
@@ -62,13 +62,13 @@ def generarTicket():
             break
         else:
             pat = input('Vuelva a ingresar la patente: ')
-    print('La patente es del pais: ', end=" ")
+    print('La patente es del pais: ')
     pais_pat = pais_patente(pat)
-    print("Ingrese el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión): ", end=' ')
+    print("Ingrese el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión): ")
     veh = validate_intervalo(0, 2)
-    print("Ingrese la forma de pago (1: manual, 2: telepeaje): ", end=' ')
+    print("Ingrese la forma de pago (1: manual, 2: telepeaje): ")
     pago = validate_intervalo(1, 2)
-    print("Ingrese el país donde se encuentra la cabina (0: Argentina, 1: Bolivia, 2: Brasil, 3: Paraguay, 4: Uruguay): ", end='')
+    print("Ingrese el país donde se encuentra la cabina (0: Argentina, 1: Bolivia, 2: Brasil, 3: Paraguay, 4: Uruguay): ")
     pais = validate_intervalo(0, 4)
     dist = float(input("Ingrese la distancia recorrida desde la última cabina en kilómetros: "))
     return Ticket(id, pat, pais_pat, veh, pago, pais, dist)
@@ -101,6 +101,13 @@ def pais_patente(patente):
             pais = 'Chile'
         else:
             pais = 'Otro'
+    elif len(patente) == 6:
+        if patente[0:4].isalpha() and patente[4:].isdigit():
+            pais = 'Chile'
+        else:
+            pais = 'Otro'
+    else:
+        pais = 'Otro'
 
     return pais
 
@@ -125,7 +132,7 @@ def cargar_arreglo_texto(fd, v):
 
 #Opcion 2
 def carga_arreglo_manual(v):
-    print("Ingrese la cantidad de tickets que quiere registrar: ", end=" ")
+    print("Ingrese la cantidad de tickets que quiere registrar: ")
     n = validate(0)
     print()
 
@@ -149,3 +156,8 @@ def display(v):
         print(tickets)
         print()
 
+#Opcion 4
+
+#Opcion 5
+
+#Opcion 6
