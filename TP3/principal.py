@@ -43,10 +43,10 @@ def principal():
             pass
 
         elif opc == 6:
-            pass
+            cont_veh(tickets)
 
         elif opc == 7:
-            pass
+            cont_final = import_acumulado(tickets)
 
         elif opc == 8:
             pass

@@ -33,6 +33,7 @@ def validate_intervalo(inf, sup):
 
     return n
 
+#validaciones
 def validate(num):
     n = num
     while n <= num:
@@ -63,7 +64,7 @@ def generarTicket():
         else:
             pat = input('Vuelva a ingresar la patente: ')
     print('La patente es del pais: ')
-    pais_pat = pais_patente(pat)
+    pais_pat, _ = pais_patente(pat) #Se usa el "_" para ignorar el segundo valor que retorna la funcion
     print("Ingrese el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión): ")
     veh = validate_intervalo(0, 2)
     print("Ingrese la forma de pago (1: manual, 2: telepeaje): ")
@@ -77,7 +78,7 @@ def generarTicket():
 def generarTicketTexto(linea):
     id = int(linea[0:10])
     pat = linea[10:17]
-    pais_pat = pais_patente(pat)
+    pais_pat, _ = pais_patente(pat)
     veh = int(linea[17:18])
     pago = int(linea[18:19])
     pais = int(linea[19:20])
@@ -89,27 +90,37 @@ def pais_patente(patente):
     if len(patente) == 7:
         if patente[:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha():
             pais = 'Argentina'
+            cod = 0
         elif patente[:3].isalpha() and patente[3:].isdigit():
             pais = 'Uruguay'
+            cod = 1
         elif patente[:2].isalpha() and patente[2:].isdigit():
             pais = 'Bolivia'
+            cod = 2
         elif patente[:4].isalpha() and patente[4:].isdigit():
             pais = 'Paraguay'
+            cod = 3
         elif patente[:3].isalpha() and patente[3:4].isdigit() and patente[4:5].isalpha() and patente[5:].isdigit():
             pais = 'Brasil'
+            cod = 4
         elif patente[0:1] == " " and patente[1:5].isalpha() and patente[5:].isdigit():
             pais = 'Chile'
+            cod = 5
         else:
             pais = 'Otro'
+            cod = 6
     elif len(patente) == 6:
         if patente[0:4].isalpha() and patente[4:].isdigit():
             pais = 'Chile'
+            cod = 5
         else:
             pais = 'Otro'
+            cod = 6
     else:
         pais = 'Otro'
+        cod = 6
 
-    return pais
+    return pais, cod
 
 #Ordena arreglo por codigo
 def ordenar_men_may(v):
@@ -118,6 +129,29 @@ def ordenar_men_may(v):
         for j in range(i+1, n):
             if v[i].id > v[j].id:
                 v[i], v[j] = v[j], v[i]
+
+def imp_tot(pais, tipo, pago):
+    importe_final = 0
+    # Pais de la cabina de peaje
+    if pais == 2:
+        importe_base = 400
+    elif pais == 1:
+        importe_base = 200
+    else:
+        importe_base = 300
+    # Tipo de vehiculo
+    if tipo == 0:
+        importe_base *= 0.5
+    elif tipo == 2:
+        importe_base *= 1.6
+
+    # Aplicación del descuento/cargo por telepeaje
+    if pago == 2:
+        importe_final = int(importe_base * 0.9)
+    else:
+        importe_final = int(importe_base)
+
+    return importe_final
 
 #Opcion 1
 def cargar_arreglo_texto(fd, v):
@@ -161,3 +195,46 @@ def display(v):
 #Opcion 5
 
 #Opcion 6
+def cont_veh(v):
+    if len(v) == 0:
+        print('No hay datos cargados....')
+        print()
+        return
+
+    cont = [0] * 7
+    for i in range(len(v)):
+        _, pos = pais_patente(v[i].patente)
+        cont[pos] += 1
+
+    print("--------Cantidad de vehiculos de cada pais que pasaron por las cabinas--------")
+    print("Cantidad de Argentina: ", cont[0])
+    print("Cantidad de Uruguay: ", cont[1])
+    print("Cantidad de Bolivia: ", cont[2])
+    print("Cantidad de Paraguay: ", cont[3])
+    print("Cantidad de Brasil: ", cont[4])
+    print("Cantidad de Chile: ", cont[5])
+    print("Cantidad de Otros paises:", cont[6])
+
+#Opcion 7
+def import_acumulado(v):
+    if len(v) == 0:
+        print('No hay datos cargados....')
+        print()
+        return
+
+    cont = [0] * 3
+    for i in range(len(v)):
+        final = imp_tot(v[i].pais_cab, v[i].vehiculo, v[i].pago)
+        if v[i].vehiculo == 0:
+            cont[0] += final
+        elif v[i].vehiculo == 1:
+            cont[1] += final
+        else:
+            cont[2] += final
+
+    print('----------------Pagos acumulados por cada tipo de vehiculo---------------')
+    print('Importe acumulado para las motocicletas: $', cont[0])
+    print('Importe acumulado para las autos: $', cont[1])
+    print('Importe acumulado para las camiones: $', cont[2])
+
+    return cont
