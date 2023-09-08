@@ -24,6 +24,7 @@ class Ticket():
         paises = ['Argentina ', 'Bolivia ', 'Brasil ', 'Paraguay ', 'Uruguay']
         return paises[pais_cab]
 
+#validaciones
 def validate_intervalo(inf, sup):
     n = inf - 1
     while n < inf or n > sup:
@@ -33,7 +34,6 @@ def validate_intervalo(inf, sup):
 
     return n
 
-#validaciones
 def validate(num):
     n = num
     while n <= num:
@@ -130,6 +130,7 @@ def ordenar_men_may(v):
             if v[i].id > v[j].id:
                 v[i], v[j] = v[j], v[i]
 
+#Calculo del importe total
 def imp_tot(pais, tipo, pago):
     importe_final = 0
     # Pais de la cabina de peaje
@@ -153,6 +154,15 @@ def imp_tot(pais, tipo, pago):
 
     return importe_final
 
+#Conversion de la forma de pago
+def forma_pago(v):
+    for i in range(len(v)):
+        if v[i].pago == 1:
+            v[i].pago = 2
+
+        elif v[i].pago == 2:
+            v[i].pago = 1
+
 #Opcion 1
 def cargar_arreglo_texto(fd, v):
     arch = open(fd, "r")
@@ -165,34 +175,70 @@ def cargar_arreglo_texto(fd, v):
     return v
 
 #Opcion 2
-def carga_arreglo_manual(v):
+def carga_arreglo_manual(v, bandera):
     print("Ingrese la cantidad de tickets que quiere registrar: ")
     n = validate(0)
     print()
 
     print("Ingrese datos del ticket: ")
+    bandera = False
     for i in range(n):
         v.append(generarTicket())
-
-    return v
-
+    return v, bandera
 
 #opcion3
-def display(v):
+def display(v, bandera):
     if len(v) == 0:
         print('No hay datos cargados....')
         print()
         return
 
     ordenar_men_may(v)
+    bandera = True
     print('Listado de tickets')
     for tickets in v:
         print(tickets)
         print()
+    return bandera
 
 #Opcion 4
+def busqueda_por_patente(v):
+    p = input("ingrese la patente a buscar: ")
+    x = int(input("ingrese la cabina a buscar: "))
+    for i in range(len(v)):
+        if p == v[i].patente and x == v[i].pais_cab:
+            return v[i]
+    return -1
 
 #Opcion 5
+def busqueda_por_codigo(v, bandera):
+    n = len(v)
+    izq, der = 0, n - 1
+    t = int(input("Ingrese el código de ticket a buscar:  "))
+    if bandera == True:
+        while izq <= der:
+            c = (izq + der) // 2
+            if v[c].id == t:
+                if v[c].pago == 1:
+                    v[c].pago = 2
+                else:
+                    v[c].pago = 1
+                return v[c]
+
+            elif t > v[c].id:
+                izq = c + 1
+            else:
+                der = c - 1
+        return -1
+    else:
+        for i in range(len(v)):
+            if v[i].id == t:
+                if v[i].pago == 1:
+                    v[i].pago = 2
+                else:
+                    v[i].pago = 1
+                return v[i]
+        return -1
 
 #Opcion 6
 def cont_veh(v):
@@ -238,3 +284,29 @@ def import_acumulado(v):
     print('Importe acumulado para las camiones: $', cont[2])
 
     return cont
+
+#Opcion 8
+def mayor_total(cont):
+    if len(cont) == 0:
+        print('No hay datos cargados....')
+        print()
+        return
+
+    n = cont[0] + cont[1] + cont[2]
+    if cont[0] > cont[1] and cont[0] > cont[2]:
+        print('El tipo de vehiculo con mayor monto acumulado es la motocicleta y es de $', cont[0])
+        porc = round((cont[0] * 100) / n, 2)
+        print(' Porcentaje que representa este monto sobre los montos totales: ', porc, '%')
+        return
+    elif cont[1] > cont[2]:
+        print('El tipo de vehiculo con mayor monto acumulado son los autos y es de $', cont[1])
+        porc = round((cont[1] * 100) / n, 2)
+        print(' Porcentaje que representa este monto sobre los montos totales: ', porc, '%')
+        return
+    else:
+        print('El tipo de vehiculo con mayor monto acumulado son los camiones y es de $', cont[2])
+        porc = round((cont[2] * 100) / n, 2)
+        print(' Porcentaje que representa este monto sobre los montos totales: ', porc, '%')
+        return
+
+#Opcion 9

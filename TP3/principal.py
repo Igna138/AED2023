@@ -4,6 +4,8 @@ def principal():
     FD = "peajes-tp3.txt"
     tickets = []
     opc = 0
+    band = False
+    v_cont_final = []
     while opc != 10:
         print('\nMenu de opciones:  -----------------Peajes de Sudamerica 3.0-----------------')
         print('1. Crear el arreglo de registros desde un archivo .txt')
@@ -31,25 +33,33 @@ def principal():
                     cargar_arreglo_texto(FD, tickets)
 
         elif opc == 2:
-            carga_arreglo_manual(tickets)
+            carga_arreglo_manual(tickets, band)
 
         elif opc == 3:
-            display(tickets)
+            display(tickets, band)
 
         elif opc == 4:
-            pass
+            x = busqueda_por_patente(tickets)
+            if x != -1:
+                print('Se encontró la patente buscada en la cabina solicitada: ', x)
+            else:
+                print('No se encontró la patente buscada en la cabina solicitada')
 
         elif opc == 5:
-            pass
+            encontrado = busqueda_por_codigo(tickets, band)
+            if encontrado != -1:
+                print('Se encontró la patente buscada en la cabina solicitada: ', encontrado)
+            else:
+                print('No se encontró la patente buscada en la cabina solicitada')
 
         elif opc == 6:
             cont_veh(tickets)
 
         elif opc == 7:
-            cont_final = import_acumulado(tickets)
+            v_cont_final = import_acumulado(tickets)
 
         elif opc == 8:
-            pass
+            mayor_total(v_cont_final)
 
         elif opc == 9:
             pass
