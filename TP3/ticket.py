@@ -154,15 +154,6 @@ def imp_tot(pais, tipo, pago):
 
     return importe_final
 
-#Conversion de la forma de pago
-def forma_pago(v):
-    for i in range(len(v)):
-        if v[i].pago == 1:
-            v[i].pago = 2
-
-        elif v[i].pago == 2:
-            v[i].pago = 1
-
 #Opcion 1
 def cargar_arreglo_texto(fd, v):
     arch = open(fd, "r")
@@ -215,7 +206,7 @@ def busqueda_por_codigo(v, bandera):
     n = len(v)
     izq, der = 0, n - 1
     t = int(input("Ingrese el código de ticket a buscar:  "))
-    if bandera == True:
+    if bandera:
         while izq <= der:
             c = (izq + der) // 2
             if v[c].id == t:
