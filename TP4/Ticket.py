@@ -1,4 +1,6 @@
 # Definición de la clase Ticket
+import io
+import os.path
 import pickle
 
 
@@ -61,12 +63,15 @@ def cargar_archivo_csv(nom):
     arch.close()
     return vr
 
-def generar_archivo_b(vcsv, nom_bin):
-    vb= []
+def generar_archivo_b(acsv, nom_bin):
+    lectura = open(acsv,"rt")
+    lectura.readline()
+    l=lectura.readline()
     arch_b = open(nom_bin, "wb")
-    for p in vcsv:
-        pickle.dump(p, arch_b)
+    for l in lectura:
+        pickle.dump(l, arch_b)
     arch_b.close()
+    lectura.close()
 
 
 #-------Punto 2 ---- Carga por teclado y validaciones
@@ -99,6 +104,41 @@ def validate_patente(pat):
             print('La patente está mal cargada....solo puede tener dígitos y letras')
             return -1
 
+def pais_patente(patente):
+    if len(patente) == 7:
+        if patente[:2].isalpha() and patente[2:5].isdigit() and patente[5:].isalpha():
+            pais = 'Argentina'
+            cod = 0
+        elif patente[:3].isalpha() and patente[3:].isdigit():
+            pais = 'Uruguay'
+            cod = 1
+        elif patente[:2].isalpha() and patente[2:].isdigit():
+            pais = 'Bolivia'
+            cod = 2
+        elif patente[:4].isalpha() and patente[4:].isdigit():
+            pais = 'Paraguay'
+            cod = 3
+        elif patente[:3].isalpha() and patente[3:4].isdigit() and patente[4:5].isalpha() and patente[5:].isdigit():
+            pais = 'Brasil'
+            cod = 4
+        elif patente[0:1] == " " and patente[1:5].isalpha() and patente[5:].isdigit():
+            pais = 'Chile'
+            cod = 5
+        else:
+            pais = 'Otro'
+            cod = 6
+    elif len(patente) == 6:
+        if patente[0:4].isalpha() and patente[4:].isdigit():
+            pais = 'Chile'
+            cod = 5
+        else:
+            pais = 'Otro'
+            cod = 6
+    else:
+        pais = 'Otro'
+        cod = 6
+
+    return pais
 
 # Estructura para carga por teclado
 def generarTicket():
@@ -120,22 +160,89 @@ def generarTicket():
     print("Ingrese el país donde se encuentra la cabina (0: Argentina, 1: Bolivia, 2: Brasil, 3: Paraguay, 4: Uruguay): ")
     pais = validate_intervalo(0, 4)
     dist = float(input("Ingrese la distancia recorrida desde la última cabina en kilómetros: "))
-    return Ticket(id, pat, pais_pat, veh, pago, pais, dist)
+    res =  Ticket(id, pat, veh, pago, pais, dist)
+    return res
 
+def crear_registro_p2(v):
+    vr = []
+    vr.append(v)
+    return vr
+
+def agregar_teclado_a_binario(v, bin):
+    if not os.path.exists(bin):
+        print('Primero debe generar el archivo!')
+        return
+    agg = open(bin, "a+b")
+    for res in v:
+        agrega = ""
+        agrega += v.id + (v.pat) + str(v.veh) + str(v.pag) + str(v.paiscab) + str(v.dist)
+        agrega += "\n"
+        agg.write(agrega)
+    agg.close()
 
 
 #-----punto 3---mostrar todos los datos del archivo binario
 def mostrar_datos_binario(nom_bin):
-    vp=[]
-    arch = open(nom_bin, "rb")
-    for i in range(len(nom_bin)):
-        vp.append(i)
-        print(vp)
-    arch.close()
+    if not os.path.exists(nom_bin):
+        print('Primero debe generar el archivo!')
+        return
+    else:
+        dat = open(nom_bin, 'rb')
+        size = os.path.getsize(nom_bin)
+        while dat.tell() < size:
+            ticket = pickle.load(dat)
+            if ticket[-1] == '\n':
+                ticket = ticket[:-1]
+            campo = ticket.split(",")
+            patente = campo[1]
+            print(f"{ticket} -- La patente pertenece a :", pais_patente(patente))
 
+        dat.close()
 
+#-----PUNTO4
+def validar_patente_p4():
+    pat = input('Ingrese la patente: ')
+    obli = 1  # Condición para forzar el incio del ciclo
+    while obli == 1:
+        if validate_patente(pat) != -1:
+            break
+        else:
+            pat = input('Vuelva a ingresar la patente: ')
 
+def punto4(nom_bin, p):
+    if not os.path.exists(nom_bin):
+        print('Primero debe generar el archivo!')
+        return
+    else:
+        cont = 0
+        dat = open(nom_bin, 'rb')
+        size = os.path.getsize(nom_bin)
+        while dat.tell() < size:
+            ticket = pickle.load(dat)
+            campo = ticket.split(",")
+            patente = campo[1]
+            if p == patente:
+                print(ticket)
+                cont += 1
 
+        dat.close()
+        print("Se registraron ", cont, "archivos con esa patente")
+
+def punto_5(nom_bin, c):
+    if not os.path.exists(nom_bin):
+        print('Primero debe generar el archivo!')
+        return
+    else:
+        dat = open(nom_bin, 'rb')
+        size = os.path.getsize(nom_bin)
+        while dat.tell() < size:
+            ticket = pickle.load(dat)
+            campo = ticket.split(",")
+            codigo = campo[0]
+            if c == codigo:
+                print(ticket)
+                break
+        dat.close()
 
 def mostrar(v):
     for p in v:
