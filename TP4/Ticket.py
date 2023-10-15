@@ -43,35 +43,28 @@ def mostrar_menu():
     print("0. Salir")
 
 #----Punto 1 ---
-def cargar_archivo_csv(nom):
-    vr = []
-    arch = open(nom, "rt")
-    arch.readline()
-    arch.readline()
-    linea = arch.readline()
-    while linea != "":
-        vec_linea = linea.split(",")
-        id = int(vec_linea[0])
-        pat = vec_linea[1]
-        veh = int(vec_linea[2])
-        pag = int(vec_linea[3])
-        paiscab = int(vec_linea[4])
-        dist = int(vec_linea[5])
-        res = Ticket(id, pat, veh, pag, paiscab, dist)
-        vr.append(res)
-        linea = arch.readline()
-    arch.close()
-    return vr
-
 def generar_archivo_b(acsv, nom_bin):
-    lectura = open(acsv,"rt")
-    lectura.readline()
-    l=lectura.readline()
-    arch_b = open(nom_bin, "wb")
-    for l in lectura:
-        pickle.dump(l, arch_b)
-    arch_b.close()
-    lectura.close()
+    if os.path.exists(acsv):
+        lectura = open(acsv,"rt")
+        l=lectura.readline()
+        arch_b = open(nom_bin, "wb")
+        while True:
+            l=lectura.readline()
+
+            if l == "":
+                break
+            datos = l.split(",")
+            id = int(datos[0])
+            pat = datos[1]
+            veh = int(datos[2])
+            pag = int(datos[3])
+            paiscab = int(datos[4])
+            dist  =  int(datos[5])
+            res  = Ticket(id, pat, veh, pag,  paiscab,  dist)
+            pickle.dump(res, arch_b)
+
+        arch_b.close()
+        lectura.close()
 
 
 #-------Punto 2 ---- Carga por teclado y validaciones
@@ -103,6 +96,9 @@ def validate_patente(pat):
         else:
             print('La patente está mal cargada....solo puede tener dígitos y letras')
             return -1
+
+
+
 
 def pais_patente(patente):
     if len(patente) == 7:
@@ -152,7 +148,7 @@ def generarTicket():
         else:
             pat = input('Vuelva a ingresar la patente: ')
     print('La patente es del país: ')
-    pais_pat, _ = pais_patente(pat)  # Se usa el "_" para ignorar el segundo valor que retorna la funcion
+    #pais_pat, _ = pais_patente(pat)  # Se usa el "_" para ignorar el segundo valor que retorna la funcion
     print("Ingrese el tipo de vehículo (0: motocicleta, 1: automóvil, 2: camión): ")
     veh = validate_intervalo(0, 2)
     print("Ingrese la forma de pago (1: manual, 2: telepeaje): ")
@@ -163,21 +159,12 @@ def generarTicket():
     res =  Ticket(id, pat, veh, pago, pais, dist)
     return res
 
-def crear_registro_p2(v):
-    vr = []
-    vr.append(v)
-    return vr
-
-def agregar_teclado_a_binario(v, bin):
+def agregar_teclado_a_binario(a ,bin):
     if not os.path.exists(bin):
         print('Primero debe generar el archivo!')
         return
-    agg = open(bin, "a+b")
-    for res in v:
-        agrega = ""
-        agrega += v.id + (v.pat) + str(v.veh) + str(v.pag) + str(v.paiscab) + str(v.dist)
-        agrega += "\n"
-        agg.write(agrega)
+    agg = open(bin, "ab")
+    pickle.dump(a, agg)
     agg.close()
 
 
@@ -191,15 +178,12 @@ def mostrar_datos_binario(nom_bin):
         size = os.path.getsize(nom_bin)
         while dat.tell() < size:
             ticket = pickle.load(dat)
-            if ticket[-1] == '\n':
-                ticket = ticket[:-1]
-            campo = ticket.split(",")
-            patente = campo[1]
+            patente = ticket.patente
             print(f"{ticket} -- La patente pertenece a :", pais_patente(patente))
 
         dat.close()
 
-#-----PUNTO4
+#-----PUNTO4 mostrar patente buscada p
 def validar_patente_p4():
     pat = input('Ingrese la patente: ')
     obli = 1  # Condición para forzar el incio del ciclo
@@ -219,15 +203,13 @@ def punto4(nom_bin, p):
         size = os.path.getsize(nom_bin)
         while dat.tell() < size:
             ticket = pickle.load(dat)
-            campo = ticket.split(",")
-            patente = campo[1]
-            if p == patente:
+            if p == ticket.patente:
                 print(ticket)
                 cont += 1
 
         dat.close()
         print("Se registraron ", cont, "archivos con esa patente")
-
+#----PUNTO5 mostrar codigo buscado c
 def punto_5(nom_bin, c):
     if not os.path.exists(nom_bin):
         print('Primero debe generar el archivo!')
@@ -237,15 +219,119 @@ def punto_5(nom_bin, c):
         size = os.path.getsize(nom_bin)
         while dat.tell() < size:
             ticket = pickle.load(dat)
-            campo = ticket.split(",")
-            codigo = campo[0]
-            if c == codigo:
+            if c == ticket.id:
                 print(ticket)
                 break
         dat.close()
 
-def mostrar(v):
-    for p in v:
-        print(p)
+#----PUNTO6
+def cargar_matriz(nom_bin):
+    if os.path.exists(nom_bin):
+        dat = open(nom_bin, 'rb')
+        size = os.path.getsize(nom_bin)
+        mat = [[0] * 5 for i in range(3)]
+        while dat.tell() < size:
+            ticket = pickle.load(dat)
+            fila = ticket.vehiculo
+            columna = ticket.pais_cab
+            mat[fila][columna] +=  1
+        dat.close()
+        return mat
+    else:
+        print('Primero debe generar el archivo!')
+        #break
 
+
+
+def mostrar_matriz(mat):
+    print("Resultados")
+    for i in range(len(mat)):
+        for  j in  range(len(mat[i])):
+            if mat[i][j] != 0:
+                print( "Del tipo:", i, "-  Pais:",j, "hay: ", mat[i][j])
+    print()
+
+#-----Punto 7  ----------------------------
+def punto_7(mat):
+    print("Totales por tipo de vehículo")
+    for f in range(len(mat)):
+        ac = 0.
+        for c in range(len(mat[f])):
+            ac += mat[f][c]
+        print("Tipo:", f, " - Cantidad:", ac)
+    print()
+
+    print("Totales por países de cabinas")
+    for c in range(len(mat[f])):
+        ac = 0
+        for f in range(len(mat)):
+            ac += mat[f][c]
+        print("País:", c, " - Cantidad:", ac)
+    print()
+#------------PUNTO8 crear registro  a partir del binario, calcular distancia promedio y mostrar los mayores
+
+def punto_8(nom_bin, vec, promedio):
+    vec = []
+    # verificar si el archivo existe
+    if not os.path.exists(nom_bin):
+        print("No existe el archivo")
+    else:
+        # abrir el archivo para leer
+        dat = open(nom_bin, "rb")
+        # recorrer
+        size = os.path.getsize(nom_bin)
+        while dat.tell() < size:
+            ticket = pickle.load(dat)
+            datos_nuevo = Ticket(ticket.id, ticket.patente, ticket.vehiculo, ticket.pago, ticket.pais_cab, ticket.distancia)
+            if promedio < datos_nuevo.distancia:
+                add_in_order(vec, datos_nuevo)
+        # cerrar el archivo
+        dat.close()
+        return vec
+
+def calculo_promedio(nom_bin):
+    if not os.path.exists(nom_bin):
+        print("No existe el archivo")
+    else:
+        cont1 =  acum1 = promedio = 0
+        # abrir el archivo para leer
+        dat = open(nom_bin, "rb")
+        # recorrer
+        size = os.path.getsize(nom_bin)
+        while dat.tell() < size:
+            ticket = pickle.load(dat)
+            #for i in ticket:
+            cont1 += 1
+            acum1 += ticket.distancia
+            promedio = round(acum1 / cont1, 2)
+    return promedio
+
+def add_in_order(vec, ticket):
+    n = len(vec)
+    pos = n
+    iz = 0  # primer elemento del vector
+    de = n - 1  # ultimo elemento del vector
+
+    while iz <= de:
+        # buscar el valor central
+        c = (iz + de) // 2
+        if vec[c].distancia == ticket.distancia:
+            pos = c
+            break
+        elif ticket.distancia < vec[c].distancia:
+            # mover a la izquierda
+            de = c - 1
+        else:
+            # mover a la derecha
+            iz = c + 1
+    # ajuste de indice en la inserción
+    if iz > de:
+        pos = iz
+
+    vec[pos:pos] = [ticket]
+
+def mostrar_vector(v, promedio):
+    for i in v:
+        print(i)
+    print("El promedio de distancia recorrida es: ", promedio)
 
