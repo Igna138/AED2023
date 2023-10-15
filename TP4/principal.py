@@ -29,30 +29,27 @@ def principal():
             agregar_teclado_a_binario(a, bin_arch)
 
         elif opcion == 3:
-            mostrar_datos_binario(bin_arch) #Revisar
+            mostrar_datos_binario(bin_arch)
 
         elif opcion == 4:
-            #p = validat_patente_p4()
-            pat = input('Ingrese la patente: ')
-            punto4(bin_arch, pat)
+            punto4(bin_arch)
 
         elif opcion == 5:
-            print('Nro de ticket: ')
-            c = validate_intervalo(1, 999999999)
-            punto_5(bin_arch, c)
+            punto_5(bin_arch)
 
         elif opcion == 6:
             mat = cargar_matriz(bin_arch)
-            mostrar_matriz(mat)
+            if mat != None:
+                mostrar_matriz(mat)
 
         elif opcion == 7:
             mat = cargar_matriz(bin_arch)
-            punto_7(mat)
+            if mat != None:
+                punto_7(mat)
 
         elif opcion == 8:
             prom = calculo_promedio(bin_arch)
-            v = punto_8(bin_arch, prom)
-            mostrar_vector(v, prom)
+            punto_8(bin_arch, prom)
 
         elif opcion == 0:
             print("-----FIN DEL PROGAMA-----")
